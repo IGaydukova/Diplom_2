@@ -1,8 +1,7 @@
-package UserTest;
-import Config.BasePage;
-import User.User;
-import User.UserClient;
-import User.UserGenerate;
+package userTest;
+import user.User;
+import user.UserClient;
+import user.UserGenerate;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -21,17 +20,17 @@ public class ChangeUserApiTest {
     private UserClient userClient;
     @Before
     public void setUp() {
-
+        isCreated = false;
         user = UserGenerate.getDefaultUser();
         userClient = new UserClient();
-        RestAssured.baseURI = Config.BasePage.URL;
+        RestAssured.baseURI = config.BasePage.URL;
     }
     //Изменение данных пользователя (авторизация)
     @Test
     @DisplayName("Change user name")
     public void userCanChangedNameAfterLoginTest(){
         //Создали пользователя
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
        //Авторизовались
@@ -47,7 +46,7 @@ public class ChangeUserApiTest {
         assertTrue("User not created", isCreated); // проверяем ответ Api
         isCreated = true;
         user.setName("Update"+user.getName());
-        ValidatableResponse updateResponse = userClient.update(accessToken, user);
+        ValidatableResponse updateResponse = userClient.updateUser(accessToken, user);
         int updateStatusCode = updateResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, updateStatusCode); // проверяем код ответа сервера
     }
@@ -56,7 +55,7 @@ public class ChangeUserApiTest {
     @DisplayName("Change user password")
     public void userCanChangedPasswordAfterLoginTest(){
         //Создали пользователя
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -72,7 +71,7 @@ public class ChangeUserApiTest {
         assertTrue("User not created", isCreated); // проверяем ответ Api
         isCreated = true;
         user.setPassword("upd"+user.getPassword());
-        ValidatableResponse updateResponse = userClient.update(accessToken, user);
+        ValidatableResponse updateResponse = userClient.updateUser(accessToken, user);
         int updateStatusCode = updateResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, updateStatusCode); // проверяем код ответа сервера
     }
@@ -81,7 +80,7 @@ public class ChangeUserApiTest {
     @DisplayName("Try to change user without authorization")
     public void userCanNotChangedWithoutLoginTest(){
         //Создали пользователя
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         boolean isCreated =response.extract().path("success");
@@ -90,7 +89,7 @@ public class ChangeUserApiTest {
         user.setName("Update"+user.getName());
         user.setEmail("Update"+user.getEmail());
         user.setPassword("upd"+user.getPassword());
-        ValidatableResponse updateResponse = userClient.updateWithoutLogin(user);
+        ValidatableResponse updateResponse = userClient.updateUserWithoutLogin(user);
         int updateStatusCode = updateResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_UNAUTHORIZED, updateStatusCode); // проверяем код ответа сервера
         String textAnswer = updateResponse.extract().path("message");
@@ -101,7 +100,7 @@ public class ChangeUserApiTest {
     @DisplayName("Change user email")
     public void userCanChangedEmailAfterLoginTest(){
         //Создали пользователя
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -117,7 +116,7 @@ public class ChangeUserApiTest {
         assertTrue("User not created", isCreated); // проверяем ответ Api
         isCreated = true;
         user.setEmail("Update"+user.getEmail());
-        ValidatableResponse updateResponse = userClient.update(accessToken, user);
+        ValidatableResponse updateResponse = userClient.updateUser(accessToken, user);
         int updateStatusCode = updateResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, updateStatusCode); // проверяем код ответа сервера
 
@@ -125,6 +124,6 @@ public class ChangeUserApiTest {
     }
     @After
     public void tearDown(){
-        if(isCreated==true) {userClient.delete(accessToken);}
+        if(isCreated) {userClient.deleteUser(accessToken);}
     }
 }

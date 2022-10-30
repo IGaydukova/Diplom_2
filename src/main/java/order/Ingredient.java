@@ -1,4 +1,4 @@
-package Order;
+package order;
 
 public class Ingredient {
     private String _id;

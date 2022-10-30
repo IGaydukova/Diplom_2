@@ -1,8 +1,8 @@
-package Order;
+package order;
 
-import User.User;
-import User.UserClient;
-import User.UserGenerate;
+import user.User;
+import user.UserClient;
+import user.UserGenerate;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -11,8 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.apache.http.HttpStatus.*;
@@ -31,7 +29,7 @@ public class OrderApiTest {
         orderClient = new OrderClient();
         user = UserGenerate.getDefaultUser();
         userClient = new UserClient();
-        RestAssured.baseURI = Config.BasePage.URL;
+        RestAssured.baseURI = config.BasePage.URL;
         ingredientsForOrder = new IDIngredientList();
 
     }
@@ -51,7 +49,7 @@ public class OrderApiTest {
             ingredientsForOrder.addId(ingredientsList.getIngredients().get(randNum).get_id());
         }
         //Создали пользователя
-        ValidatableResponse userResponse = userClient.create(user);
+        ValidatableResponse userResponse = userClient.createUser(user);
         int statusCode = userResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -102,7 +100,7 @@ public class OrderApiTest {
         ingredientsList = response.extract().as(IngredientsList.class);
         int size = this.ingredientsList.getIngredients().size();
         //Создали пользователя
-        ValidatableResponse userResponse = userClient.create(user);
+        ValidatableResponse userResponse = userClient.createUser(user);
         int statusCode = userResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -134,7 +132,7 @@ public class OrderApiTest {
         }
 
         //Создали пользователя
-        ValidatableResponse userResponse = userClient.create(user);
+        ValidatableResponse userResponse = userClient.createUser(user);
         int statusCode = userResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -153,6 +151,6 @@ public class OrderApiTest {
     }
     @After
     public void tearDown() {
-        if(isCreated==true) {userClient.delete(accessToken);}
+        if(isCreated==true) {userClient.deleteUser(accessToken);}
     }
 }

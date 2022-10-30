@@ -1,8 +1,7 @@
-package UserTest;
-import Config.BasePage;
-import User.User;
-import User.UserClient;
-import User.UserGenerate;
+package userTest;
+import user.User;
+import user.UserClient;
+import user.UserGenerate;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -21,20 +20,20 @@ boolean isCreated = false;
 private UserClient userClient;
     @Before
     public void setUp() {
-
+        isCreated = false;
         user = UserGenerate.getDefaultUser();
         userClient = new UserClient();
-        RestAssured.baseURI = Config.BasePage.URL;
+        RestAssured.baseURI = config.BasePage.URL;
     }
 
     //Создание пользователя +
     @Test
     @DisplayName("Create user")
     public void userCanCreatedTest(){
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
-        boolean isCreated =response.extract().path("success");
+        isCreated =response.extract().path("success");
         assertTrue("User not created", isCreated); // проверяем ответ Api
         accessToken = response.extract().path("accessToken");
         assertNotNull("Access Token is null",accessToken);
@@ -43,22 +42,20 @@ private UserClient userClient;
         ValidatableResponse loginResponse = userClient.login(user);
         int loginStatusCode = loginResponse.extract().statusCode();
         assertEquals("User is not login", SC_OK, loginStatusCode);
-        isCreated = true;
     }
 
     //Нельзя создать двух одинаковых пользователей +
     @Test
     @DisplayName("Try to create same user")
     public void sameUserCanNotCreatedTest(){
-        ValidatableResponse response = userClient.create(user); // создали пользователя
+        ValidatableResponse response = userClient.createUser(user); // создали пользователя
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
-        boolean isCreated =response.extract().path("success");
+        isCreated =response.extract().path("success");
         assertTrue("User not created", isCreated); // проверяем ответ Api
         accessToken = response.extract().path("accessToken");
         assertNotNull("Access Token is null",accessToken);
-        isCreated = true;
-        ValidatableResponse responseSame = userClient.create(user); // создали еще одного такого же пользователя
+        ValidatableResponse responseSame = userClient.createUser(user); // создали еще одного такого же пользователя
         int statusSameCode = responseSame.extract().statusCode();
         assertEquals("The Response Same Code is incorrect", SC_FORBIDDEN, statusSameCode); // проверяем код ответа сервера
         boolean isSameCreated =responseSame.extract().path("success");
@@ -73,7 +70,7 @@ private UserClient userClient;
     @DisplayName("Try to create user without name")
     public void createUserWithoutNameTest()    {
         user = UserGenerate.getUserWithoutName();
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_FORBIDDEN, statusCode); // проверяем код ответа сервера
         boolean isSameCreated =response.extract().path("success");
@@ -87,7 +84,7 @@ private UserClient userClient;
     @DisplayName("Try to create user without password")
     public void userCreateWithoutPassTest()    {
         user = UserGenerate.getUserWithoutPassword();
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_FORBIDDEN, statusCode); // проверяем код ответа сервера
         boolean isSameCreated =response.extract().path("success");
@@ -99,6 +96,6 @@ private UserClient userClient;
 
     @After
     public void tearDown(){
-        if(isCreated==true) {userClient.delete(accessToken);}
+        if(isCreated) {userClient.deleteUser(accessToken);}
     }
 }

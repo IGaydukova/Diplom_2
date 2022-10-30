@@ -1,25 +1,24 @@
-package UserTest;
+package userTest;
 
-import Order.IDIngredientList;
-import Order.IngredientsList;
-import Order.OrderClient;
-import Order.OrdersList;
-import User.User;
-import User.UserClient;
-import User.UserGenerate;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
+import order.IDIngredientList;
+import order.IngredientsList;
+import order.OrderClient;
+import order.OrdersList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import user.User;
+import user.UserClient;
+import user.UserGenerate;
 
 import java.util.Random;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
 
 public class OrderListApiTest {
     private IngredientsList ingredientsList;
@@ -32,11 +31,12 @@ public class OrderListApiTest {
     private UserClient userClient;
     @Before
     public void setUp() {
+        isCreated = false;
         orderClient = new OrderClient();
         user = UserGenerate.getDefaultUser();
         userClient = new UserClient();
         ordersList = new OrdersList();
-        RestAssured.baseURI = Config.BasePage.URL;
+        RestAssured.baseURI = config.BasePage.URL;
         ingredientsForOrder = new IDIngredientList();
 
     }
@@ -49,7 +49,7 @@ public class OrderListApiTest {
         ingredientsList = response.extract().as(IngredientsList.class);
         int size = this.ingredientsList.getIngredients().size();
         //Создали пользователя
-        ValidatableResponse userResponse = userClient.create(user);
+        ValidatableResponse userResponse = userClient.createUser(user);
         int statusCode = userResponse.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
         //Авторизовались
@@ -101,7 +101,7 @@ public class OrderListApiTest {
 
     @After
     public void tearDown() {
-        if(isCreated==true) {userClient.delete(accessToken);}
+        if(isCreated) {userClient.deleteUser(accessToken);}
     }
 }
 

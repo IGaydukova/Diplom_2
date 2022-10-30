@@ -1,9 +1,9 @@
-package User;//import io.qameta.allure.Step;
-import Config.RestClient;
+package user;
+
+import config.RestClient;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 
-import static io.restassured.RestAssured.config;
 import static io.restassured.RestAssured.given;
 public class UserClient extends RestClient {
     private static final String CREATE_USER_URL = "/api/auth/register";
@@ -11,10 +11,9 @@ public class UserClient extends RestClient {
     private static final String TOKEN_URL = "/api/auth/token";
     private static final String DEL_UPD_URL = "/api/auth/user";
     @Step("Create User")
-    public ValidatableResponse create(User user){
+    public ValidatableResponse createUser(User user){
         return given()
                 .spec(getBaseSpec())
-                //.header("Content-type", "application/json")
                 .body(user)
                 .when()
                 .post(CREATE_USER_URL)
@@ -31,7 +30,7 @@ public class UserClient extends RestClient {
                 .then();
     }
     @Step("Delete User")
-    public ValidatableResponse delete (String accessToken) {
+    public ValidatableResponse deleteUser(String accessToken) {
         return given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
@@ -40,7 +39,7 @@ public class UserClient extends RestClient {
                 .then();
     }
     @Step("Upgate User")
-    public ValidatableResponse update (String accessToken, User user) {
+    public ValidatableResponse updateUser(String accessToken, User user) {
         return given()
                 .spec(getBaseSpec())
                 .auth().oauth2(accessToken)
@@ -51,7 +50,7 @@ public class UserClient extends RestClient {
                 .then();
     }
     @Step("Update User without Login")
-    public ValidatableResponse updateWithoutLogin (User user) {
+    public ValidatableResponse updateUserWithoutLogin(User user) {
         return given()
                 .spec(getBaseSpec())
                 .body(user)

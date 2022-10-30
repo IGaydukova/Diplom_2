@@ -1,14 +1,10 @@
-package Order;
-import Config.RestClient;
-import User.User;
+package order;
+
+import config.RestClient;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 
-import static io.restassured.RestAssured.config;
 import static io.restassured.RestAssured.given;
-import Config.RestClient;
-
-import java.util.List;
 
 public class OrderClient extends RestClient {
     public static final String INGREDIENTS_LIST = "/api/ingredients";

@@ -1,6 +1,6 @@
-package User;
+package user;
 import com.github.javafaker.Faker;
-import java.util.Random;
+
 public class UserGenerate {
 
         public static User getDefaultUser(){

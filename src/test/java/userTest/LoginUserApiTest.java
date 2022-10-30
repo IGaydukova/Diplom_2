@@ -1,8 +1,7 @@
-package UserTest;
-import Config.BasePage;
-import User.User;
-import User.UserClient;
-import User.UserGenerate;
+package userTest;
+import user.User;
+import user.UserClient;
+import user.UserGenerate;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
@@ -22,16 +21,16 @@ public class LoginUserApiTest {
     private UserClient userClient;
     @Before
     public void setUp() {
-
+        isCreated = false;
         user = UserGenerate.getDefaultUser();
         userClient = new UserClient();
-        RestAssured.baseURI = Config.BasePage.URL;
+        RestAssured.baseURI = config.BasePage.URL;
     }
 //Авторизация существующим пользователем
     @Test
     @DisplayName("Login user")
     public void userCanLoginTest(){
-        ValidatableResponse response = userClient.create(user);
+        ValidatableResponse response = userClient.createUser(user);
         int statusCode = response.extract().statusCode();
         assertEquals("The Response Code is incorrect", SC_OK, statusCode); // проверяем код ответа сервера
 
@@ -65,6 +64,6 @@ public class LoginUserApiTest {
 
     @After
     public void tearDown(){
-        if(isCreated==true) {userClient.delete(accessToken);}
+        if(isCreated) {userClient.deleteUser(accessToken);}
     }
 }
